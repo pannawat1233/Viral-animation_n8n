@@ -53,4 +53,4 @@ Final Output:
 3 ตั้งค่า Product URL หรือข้อมูลสินค้าที่ต้องการ จากนั้นเปิดใช้งาน Workflow และ Run ตาม Schedule ได้ทันที
 
 Credit: Workflow โดย BoomBigNose
-<h1> Tese <h1>    
+<h1> N8N <h1>    
