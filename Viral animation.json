@@ -1,0 +1,1104 @@
+{
+  "name": "Viral animation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        480,
+        -416
+      ],
+      "id": "241145b6-2563-40c7-acf8-e1070cc92310",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f04bc889-866c-4c3c-8fa0-576c8bc4a837",
+              "name": "producturl",
+              "value": "https://console.cloudinary.com/app/c-fea83bd9a51fa91f08a2d09156146e/assets/media_library/folders/ce404d260e0937be7f947a9e09138d8b30/asset/0cd362b2f8edb9edc201e4049d81c77c/manage/summary?view_mode=mosaic&context=manage",
+              "type": "string"
+            },
+            {
+              "id": "16127cbd-2bed-4251-8cb6-3524f54e83c2",
+              "name": "numberofvideo",
+              "value": "=4",
+              "type": "string"
+            },
+            {
+              "id": "9c44e0c1-3d52-4d43-b846-cb5595e081bb",
+              "name": "System Prompt",
+              "value": "You are a “4-Scene Cinematic Prompt Randomizer” that generates short, punchy, product-based video prompts. Goal: Turn the user's product/theme details into EXACTLY 4 cinematic scene prompts (Scene 1–4) in a consistent, story-driven arc:  Hook / villain or problem appears  Inside-body / mechanism explanation (metaphor)  Damage escalates (stakes rise)  Solution appears + takeaway / CTA  Output Format (must follow exactly): For each scene: 🎬 Scene X Prompt. [One paragraph visual prompt in Thai + optional English keywords] พูดเป็นภาษาไทยว่า: [1–2 lines of Thai dialogue]  Style Rules:  Include this phrase in EVERY scene: “3D cinematic Pixar–DreamWorks inspired style, highly detailed, dramatic lighting, low angle”  Add film terms: lens, camera move, shot type, depth of field, volumetric light, atmosphere.  Keep continuity: the main character design stays consistent across scenes (same look/colors).  Randomize creatively each scene: camera move, shot, location, lighting, props, and metaphors (avoid repeating the same combo).  Make it entertaining + educational + easy to visualize.  Dialogue: informal Thai. Mild profanity is optional only if user requests it.  Safety Rules:  Do NOT generate hate, slurs, targeted harassment, or sexual content.  Avoid direct self-harm encouragement. If the user wants “แรงๆ”, keep it as health warning (“ทำร้ายสุขภาพ/เสี่ยงโรค”) rather than urging harm.  If user asks for something unsafe, rewrite it into a safe alternative while keeping the vibe.  Quality Checks before final output:  Exactly 4 scenes, no extra commentary.  Each scene includes “พูดเป็นภาษาไทยว่า:”.  The theme is clearly tied to the product detail (benefits, problem it solves, target audience).",
+              "type": "string"
+            },
+            {
+              "id": "fd27e6b9-b781-4572-bc39-6f382eadaf36",
+              "name": "productid",
+              "value": "123456789",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        688,
+        -416
+      ],
+      "id": "6c3baa32-4449-4d7c-8ab2-ac00b45835f7",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "=ช่วยวิเคราะห์จากข้อมูล/ว่ารูปที่ให้ไปคือ\"สินค้าอะไร\"ใช้ทำอะไรและ\nเหมาะกับใคร จากนั้นออกแบบคอนเทนต์แนวความรู้แบบสนุกๆ",
+        "imageUrls": "={{ $json.producturl }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        896,
+        -416
+      ],
+      "id": "e9ece5c4-47c9-47f2-83f8-f4d06b90e16f",
+      "name": "Analyze an image",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "5odxmaT07JadK7CH",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"short_des\": \"\",\n\t\"top3hashtag\": \"\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1360,
+        -256
+      ],
+      "id": "29aa3baf-25d1-4178-8945-30f9345f1441",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1376,
+        16
+      ],
+      "id": "1067f985-9d00-4c2f-8371-9cc95fad0802",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "5odxmaT07JadK7CH",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=#USER PROMPT (UPDATED - SAFE + POLITE THAI)\nCreate EXACTLY 4 scenes using your required format.\n\nProduct/Theme details (NO NEED TO POPUP A PRODUCT IMAGE,\nJUST CREATE ANIMATION THAT RELATE TO THAT):\n\n{{ $('Analyze an image').item.json.content?.parts?.[0]?.text }}\n\nStory direction:\n- Scene 1: dramatic hook — villain/problem appears in an iconic setting.\n- Scene 2: explain the harm using a metaphor\n  (system/inside view) in a clear, educational way.\n- Scene 3: escalate with “system overload + alarms + warning UI”\n  visuals (no gore, no death/self-harm phrasing).\n- Scene 4: introduce the product as the hero + clear takeaway/CTA.\n\nConstraints:\n- Keep the same main character design across all scenes.\n- VIDEO prompt: Thai dialogue only, 1–2 lines per scene.\n- Dialogue tone: friendly, polite-casual, not harsh, not rude,\n  no profanity/หยาบคาย, no shaming/blaming language.\n- Do NOT use rude pronouns or slang:\n  ใช้ “กู/มึง/แม่ง/โคตร/ว่ะ/เหี้ย/สัส/ไอ้/อี”\n  และคำด่าทุกชนิดได้\n- Avoid direct insults toward people; if you need\n\n- Avoid any violent/self-harm/death/explosion/gore wording.\n- If my input includes risky words, rewrite them into\n  safe equivalents while keeping the tone.\n- If my input includes brand names, copyrighted characters,\n  celebrity names, logos, or identifiable IP,\n  rewrite them into generic descriptions\n  (do not mention the brand/IP).",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "#SYSTEM PROMPT (UPDATED - SAFE + POLITE THAI)\n\nYou are a “4-Scene Cinematic Prompt Generator” for short product-based videos.\n\nMission:\nCreate EXACTLY 4 scenes (Scene 1–4) based on the user’s product/theme details with a clear arc:\n1) Hook: the “problem/villain” appears (pain point)\n2) Explanation: what’s happening inside (metaphor/system)\n3) Escalation: tension rises using “system overload + warnings” (NO graphic harm)\n4) Resolution: product/solution appears + takeaway/CTA\n\nSTRICT OUTPUT FORMAT (IMPORTANT):\nFor each scene, output ONLY the following blocks, in this exact order:\n\n(1) VIDEO PROMPT BLOCK (MUST stay in the current format exactly):\n🎬 Scene X Prompt\n\n.\n\n[One paragraph visual prompt for VIDEO]\nพูดเป็นภาษาไทยว่า : [Thai dialogue 1–2 lines]\n\n(2) IMAGE PROMPT BLOCK:\n🖼 Scene X Image Prompt\n\n[One paragraph IMAGE prompt — must follow IMAGE TEXT-FREE rule]\n\nPhrasing:\nUse: “ลอง...ดูนะ”, “ช่วยให้...ดีขึ้น”, “เบาลง/สบายขึ้น”, “จัดการได้ง่ายขึ้น”\n- If you need playful villain language, keep it clean:\nUse: “ตัวปัญหา”, “ตัวกวน”, “เจ้าตัวแสบ”, “สิ่งรบกวน”, “ภาระสะสม”\nAvoid: direct name-calling or degrading terms aimed at people/groups.\n\nTHIRD-PARTY / IP SANITIZATION (CRITICAL):\n- If user input contains ANY brand names, copyrighted characters, celebrity names, logos, recognizable franchises, or trademarked terms:\n  - DO NOT include them.\n  - Replace with generic equivalents (e.g. “brand mascot” -> “cute cartoon mascot”, “brand-name drink” -> “sparkling drink can”).\n  - Never request or depict exact logos, trademarks, or brand text.\n\nIMAGE PROMPT TEXT-FREE RULE (CRITICAL):\n- IMAGE prompts must contain NO text anywhere in the image.\n- Always include:\n“no text, no subtitles, no captions, no labels, no logos, no brand names, no letters, no numbers, no watermark”\n- If Scene 3 needs “warning UI” visuals, use ONLY abstract UI shapes/icons/colored panels/glowing symbols.\n\nCompliance & Safety Rules (must follow):\n- Keep it PG-13. No gore, no explicit death, no self-harm encouragement, no threats, no hate/slurs, no sexual content.\n- Do NOT use explicit violence/self-harm/death words or phrasing (examples to avoid):\n  “ฆ่าตัวตาย”, “ฆ่า”, “บาดเจ็บ”, “ตายห่า”, “ตายแน่”, “เลือด”, “แตกกระจาย”, “ระเบิด”, “ฉีก”, “ขาด”\n- If the user requests “แรงๆ”, keep it as dark-comedy HEALTH WARNING language only (still polite):\nUse: “ทำร้ายสุขภาพแบบสะสม”, “เสี่ยงโรค”, “ระบบรวน”, “พังยาว”, “ภาระเกินลิมิต”, “โหมดฉุกเฉิน”\n- If any user-provided wording is risky, automatically rewrite it into a safe equivalent while preserving tone.\n\nScene 3 Special Rule (most important):\n- Escalate using alarms, warning overlays, overheating, clogging, performance drop, emergency mode.\n- DO NOT describe organs/body “tearing, exploding, bleeding, breaking”.\n- For IMAGE prompt overlays: abstract warning UI only, NO readable text/numbers.\n\nExtra Guardrail:\n- Avoid targeting a real person or protected group. Keep negativity directed at a fictional “problem/ingredient” as a concept, not individuals/groups.\n- Keep health info as general education/metaphor (no diagnosis, no medical instructions).\n\nFinal Check:\n- Exactly 4 scenes. No extra commentary.\n- Each VIDEO block includes “พูดเป็นภาษาไทยว่า :”\n- VIDEO dialogue is Thai, informal-but-polite, max 1–2 lines, no rude words."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1568,
+        -416
+      ],
+      "id": "dac2cf73-c0a3-4ef6-8c43-a447a852fb67",
+      "name": "สร้างวิดีโอและบทพูด"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=title and top 3 hashtag keywords \n#INFORMATION\n{{ $json.content.parts[0].text }}",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1104,
+        -416
+      ],
+      "id": "542b8ecf-3aad-478e-af5c-f89fcbb7f0ab",
+      "name": "เขียน ชื่อและสร้างTag"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"array\",\n  \"items\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"video\": {\n        \"type\": \"string\",\n        \"description\": \"\"\n      },\n      \"image\": {\n        \"type\": \"string\",\n        \"description\": \"\"\n      }\n    },\n    \"required\": [\"video\", \"image\"]\n  }\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1776,
+        -176
+      ],
+      "id": "babb380d-f1b2-4172-9aeb-bc59da86f6db",
+      "name": "Structured Output Parser2"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2208,
+        -528
+      ],
+      "id": "68d56c35-bdd2-4aea-baf9-1266246617bc",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2400,
+        -528
+      ],
+      "id": "1a24a43c-c36f-4a78-8467-aa9d14fe256a",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.phaya.io/api/v1/text-to-image/generate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{ $('Split Out').item.json.image }}"
+            },
+            {
+              "name": "aspect_ratio",
+              "value": "9:16"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2560,
+        -400
+      ],
+      "id": "75e7cabc-4493-4694-8908-7df3f097d913",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "FFoE7nIkp9tefc7p",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2832,
+        -384
+      ],
+      "id": "20e82149-6a7a-4463-a438-60427ff03636",
+      "name": "Wait",
+      "webhookId": "015dd8e7-9920-48bd-a07a-6989b8c2dcc2"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.phaya.io/api/v1/text-to-image/status/\n{{ $json.job_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3056,
+        -384
+      ],
+      "id": "d3de64f4-5bb2-471f-8b14-3d25a7bfd023",
+      "name": "HTTP Request1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "FFoE7nIkp9tefc7p",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7921ce34-8c78-4b57-bf0c-3f5cabf272d8",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "COMPLETED",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3248,
+        -384
+      ],
+      "id": "18e4d643-4457-44f3-a9ef-88f86ef3751c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.phaya.io/api/v1/veo31-video/create",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"prompt\": {{ JSON.stringify($('Split Out').item.json.video) }},\n  \"model\": \"veo3_fast\",\n  \"image_urls\": [\n    \"{{ $json.image_url }}\"\n  ],\n  \"generation_type\": \"REFERENCE_2_VIDEO\",\n  \"aspect_ratio\": \"9:16\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3472,
+        -400
+      ],
+      "id": "1d54f7a5-5504-4e97-bbad-47c670847e3b",
+      "name": "HTTP Request2",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "FFoE7nIkp9tefc7p",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3680,
+        -400
+      ],
+      "id": "3a9045ea-8493-4928-9e24-d16790dc4197",
+      "name": "Wait1",
+      "webhookId": "d4b2f834-c18b-447c-ada0-24a3caacc582"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.phaya.io/api/v1/veo31-video/status/\n{{ $('HTTP Request2').item.json.job_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3904,
+        -400
+      ],
+      "id": "9a0e4c72-df56-48a1-9781-e2eab5f13398",
+      "name": "HTTP Request3",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "FFoE7nIkp9tefc7p",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d7f39c87-5139-42a2-926c-b315d5fe5b96",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        4112,
+        -400
+      ],
+      "id": "3f14b64f-727b-455e-bf66-a25d04b987e1",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "arbJDq9ql7ynd7WA",
+          "mode": "list",
+          "cachedResultName": "test2",
+          "cachedResultUrl": "/projects/XSIB8IMIXNOxrQkU/datatables/arbJDq9ql7ynd7WA"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status2": "pending",
+            "full_video2": "={{ $json.video_url }}",
+            "description2": "={{ $('เขียน ชื่อและสร้างTag').item.json.output.short_des }}",
+            "top3_hashtag2": "={{ $('เขียน ชื่อและสร้างTag').item.json.output.top3hashtag }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id2",
+              "displayName": "id2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "status2",
+              "displayName": "status2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "full_video2",
+              "displayName": "full_video2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "description2",
+              "displayName": "description2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "top3_hashtag2",
+              "displayName": "top3_hashtag2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "createdAt2",
+              "displayName": "createdAt2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "updatedAt2",
+              "displayName": "updatedAt2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        4512,
+        -272
+      ],
+      "id": "9707056e-7f5e-4054-953c-a9d8cf4a6a68",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "arbJDq9ql7ynd7WA",
+          "mode": "list",
+          "cachedResultName": "test2",
+          "cachedResultUrl": "/projects/XSIB8IMIXNOxrQkU/datatables/arbJDq9ql7ynd7WA"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "status1",
+              "keyValue": "pending"
+            },
+            {
+              "keyName": "description1",
+              "keyValue": "={{ $('เขียน ชื่อและสร้างTag').item.json.output.short_des }}"
+            },
+            {
+              "keyName": "top3_hashtag1",
+              "keyValue": "={{ $('เขียน ชื่อและสร้างTag').item.json.output.top3hashtag }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2608,
+        -704
+      ],
+      "id": "b6e2333a-c6b4-4237-af02-f2626305eb8e",
+      "name": "Get row(s)",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all video URLs from input items\nconst videoUrls = $input.all().map(item =>\n  item.json.full_video);\n\n// Combine into one string with brackets and quotes\nconst combinedString = `[${videoUrls.map(url =>\n  `\"${url}\"`).join(', ')}]`;\n\nreturn { combinedString };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2816,
+        -704
+      ],
+      "id": "63b65843-5186-416f-858b-ed863ccfe85b",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "url": "https://api.phaya.io/api/v1/media/merge-video",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"video_urls\": {{ $json.combinedString }},\n  \"resolution\": \"1080p\",\n  \"output_format\": \"mp4\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3024,
+        -704
+      ],
+      "id": "83f6b55c-81f3-4c98-8570-a2d99f53a8dd",
+      "name": "HTTP Request4",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "FFoE7nIkp9tefc7p",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3232,
+        -704
+      ],
+      "id": "dc2999e4-829a-4c67-8ce4-6c92aebd1b1d",
+      "name": "Wait2",
+      "webhookId": "acb5f89d-2b2b-41b7-a855-71a6bda68a9c"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.phaya.io/api/v1/media/status/{{ $json.job_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        3440,
+        -704
+      ],
+      "id": "bf258efd-7b5f-4e4d-800c-4ca0d99b5647",
+      "name": "HTTP Request5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3c426d64-653f-4b83-980d-0da3cef1ed6c",
+              "leftValue": "",
+              "rightValue": "completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3648,
+        -704
+      ],
+      "id": "9d1b2dee-61aa-407e-aeee-d8aba89132c8",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "4tLu2slYV9Lc6bsz",
+          "mode": "list",
+          "cachedResultName": "test1",
+          "cachedResultUrl": "/projects/XSIB8IMIXNOxrQkU/datatables/4tLu2slYV9Lc6bsz"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status1": "Done",
+            "productid1": 0
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id1",
+              "displayName": "id1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "status1",
+              "displayName": "status1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "final_video1",
+              "displayName": "final_video1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "description1",
+              "displayName": "description1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "top3_hashtag1",
+              "displayName": "top3_hashtag1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "productid1",
+              "displayName": "productid1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "createdAt1",
+              "displayName": "createdAt1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "updatedAt1",
+              "displayName": "updatedAt1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3936,
+        -720
+      ],
+      "id": "9f307727-070d-430a-97d0-1f0d73531a02",
+      "name": "Insert row1"
+    },
+    {
+      "parameters": {
+        "operation": "send"
+      },
+      "type": "@aotoki/n8n-nodes-line-messaging.lineMessaging",
+      "typeVersion": 1,
+      "position": [
+        4192,
+        -720
+      ],
+      "id": "cb6f7f85-1fe8-4150-945d-1e01177ecb0d",
+      "name": "Line Messaging"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Analyze an image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze an image": {
+      "main": [
+        [
+          {
+            "node": "เขียน ชื่อและสร้างTag",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "เขียน ชื่อและสร้างTag",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "เขียน ชื่อและสร้างTag",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "สร้างวิดีโอและบทพูด",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "สร้างวิดีโอและบทพูด",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "สร้างวิดีโอและบทพูด": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "เขียน ชื่อและสร้างTag": {
+      "main": [
+        [
+          {
+            "node": "สร้างวิดีโอและบทพูด",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert row": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request5": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Insert row1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert row1": {
+      "main": [
+        [
+          {
+            "node": "Line Messaging",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "c7bf65b8-b100-4f8d-8aad-64bd450d5a5e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "00091ae53b5ef282054a5af26090359eefa21b6abc8cce9c217fb47d9f61631c"
+  },
+  "id": "ZcJd6IjB0TwFuo7C",
+  "tags": []
+}
