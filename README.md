@@ -54,4 +54,4 @@ Final Output:
 
 Credit: Workflow โดย BoomBigNose
 <h1> แสดงรูปภาพ <h1>    
-<img src="image.png" alt="รูปภาพ" width="400">
+<img src="image.png" alt="รูปภาพ" style="width:100%;">
